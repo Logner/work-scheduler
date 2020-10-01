@@ -1,13 +1,17 @@
 var currentTime = moment().format("HH");
 var localStorageContainer = 'work-day-scheduler-tasks'
 
+// time in 24 hour format must be integer
+var workDayStart = 9;
+var workDayEnd = 18;
+
 // saveTasks to grid
 var saveTask = function(id) {
-    //finding relevant elements
+    // Make key-value pair to add to the storage array
     var dataToAdd = {};
     dataToAdd['id'] = id;
     dataToAdd['content'] = $('#'+id+'-blk').find('p.card-text').text()
-    console.log(dataToAdd)
+    console.log('Saving: ',dataToAdd)
 
     // pushing data to localstorage
     var data = localStorage.getItem(localStorageContainer);
@@ -40,29 +44,28 @@ var saveTask = function(id) {
 // loadTasks from Grid
 var loadTasks = function() {
     data = JSON.parse(localStorage.getItem(localStorageContainer));
-    data.forEach(function(val) {
-        var container = $('#'+val.id+'-blk');
-        container.find('p.card-text').text(val.content);
-    })
+    if (data){
+        data.forEach(function(val) {
+            var container = $('#'+val.id+'-blk');
+            container.find('p.card-text').text(val.content);
+        })
+    }
 }
 
 
 
 // Create rows with the id corresponding to their corresponding time 24H format
 var createTimeBlocks = function() {
-    for (i=9; i<18; i++) {
+    for (i=workDayStart; i<workDayEnd; i++) {
 
         // $(<id>) creates; $(id) selects... hmmmm...
         var timeBlock = $("<div>").addClass('row').attr('id',i+"-blk");
-        console.log(timeBlock)
         var displayTime = $("<div>").addClass("col-1");
         var taskContent = $('<div>').addClass("col card "+setTimeColor(i)+" mb-3");
         var saveTaskBtn = $('<div>').addClass('col-1');
 
         var taskDesc = $('<p>')
         .addClass('card-text m-auto')
-        // TODO: Change this to loadTasks
-        .text("Nothing Scheduled");
 
         var saveButton = $("<button>")
         .addClass('btn btn-primary')
@@ -72,25 +75,21 @@ var createTimeBlocks = function() {
             // .children is drect. .find is recursive??
             var editingArea = $('#'+id+'-blk').find('textarea.form-control');
 
+            var newContent = $('<p>')
+                            .addClass('card-text m-auto')
+                            .text(editingArea.val());
 
-            if (editingArea.val()) {
-                var newContent = $('<p>')
-                                .addClass('card-text m-auto')
-                                .text(editingArea.val());
+            editingArea.replaceWith(newContent);
 
-                editingArea.replaceWith(newContent);
+            saveTask(id);
 
-                saveTask(id);
-            }
-
-            else {
-                // button animation showing cant save unedited task
-                alert('cant save an unedited task!')
-            }
+            $(this).text('Save Task');
+            $(this).removeClass();
+            $(this).addClass('btn btn-primary');
         }).attr('id',i+"-btn");
 
-        taskContent.on("click", "p", function() {
-            var text = $(this)
+        taskContent.on("click", function() {
+            var text = $(this).find('p')
               .text()
               .trim();
           
@@ -98,7 +97,13 @@ var createTimeBlocks = function() {
             .addClass("form-control")
             .val(text);
           
-            $(this).replaceWith(textInput);  
+            $(this).find('p').replaceWith(textInput);
+
+            var button = $(this).parent('.row').find('.btn')
+
+            button.text('Update Task');
+            button.removeClass();
+            button.addClass('btn btn-warning');
           });
         
 
@@ -113,6 +118,7 @@ var createTimeBlocks = function() {
 
 var setTimeColor = function(time) {
     if (parseInt(currentTime) < time) {
+        // future
         return 'text-white bg-success';
     }
     else if(parseInt(currentTime) > time) {
@@ -121,6 +127,7 @@ var setTimeColor = function(time) {
         return 'text-white bg-secondary';
     }
     else{
+        // present
         return 'text-white bg-primary';
     }
 }
