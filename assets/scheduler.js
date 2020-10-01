@@ -66,12 +66,16 @@ var loadTasks = function() {
 var createTimeBlocks = function() {
     for (i=workDayStart; i<workDayEnd; i++) {
 
+        if (i < 10) {
+            i = '09'
+        }
+
         // Creating containers using bootstrap grid classes
         // $(<id>) creates and $(id) selects
         var timeBlock = $("<div>").addClass('row').attr('id',i+"-blk");
-        var displayTime = $("<div>").addClass("col-1");
+        var displayTime = $("<div>").addClass("col-sm-auto dt");
         var taskContent = $('<div>').addClass("col card "+setTimeColor(i)+" mb-3");
-        var saveTaskBtn = $('<div>').addClass('col-1');
+        var saveTaskBtn = $('<div>').addClass('col-sm-auto sb');
 
         // child for taskContent card (need to create this child due to bootstrap rules)
         var taskDesc = $('<p>')
@@ -84,7 +88,7 @@ var createTimeBlocks = function() {
         .attr('id',i+"-btn");
 
         // Showing the relevant time-period for the block
-        displayTime.html("<b>"+i+":00 to "+(i+1)+":00</b>");
+        displayTime.html("<b class='align-middle'>"+i+":00 to "+(parseInt(i)+1)+":00</b>");
 
         taskContent.append(taskDesc);
         saveTaskBtn.append(saveButton);
