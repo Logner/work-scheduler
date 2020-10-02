@@ -102,7 +102,7 @@ var setTimeColor = function() {
     var cardsToColor = $('div.card')
     for(i=0; i<cardsToColor.length; i++) {
         var card = $(cardsToColor[i]);
-        var time = cardsToColor[i].id.split('-')[0];
+        var time = parseInt(cardsToColor[i].id.split('-')[0]);
         if (parseInt(currentTime) < time) {
             // future
             card.removeClass('bg-secondary');
