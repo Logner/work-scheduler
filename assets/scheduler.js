@@ -67,13 +67,13 @@ var createTimeBlocks = function() {
     for (i=workDayStart; i<workDayEnd; i++) {
 
         if (i < 10) {
-            i = '09'
+            i = '0'+i;
         }
 
         // Creating containers using bootstrap grid classes
         // $(<id>) creates and $(id) selects
         var timeBlock = $("<div>").addClass('row').attr('id',i+"-blk");
-        var displayTime = $("<div>").addClass("col-sm-auto dt");
+        var displayTime = $("<div>").addClass("col-sm-2 dt");
         var taskContent = $('<div>').addClass("col card "+setTimeColor(i)+" mb-3");
         var saveTaskBtn = $('<div>').addClass('col-sm-auto sb');
 
@@ -165,3 +165,13 @@ $("div.card").on('click', function() {
     button.removeClass();
     button.addClass('btn btn-warning');
 })
+
+// Updating Webpage every 15 seconds to keep the app updated.
+setInterval(function() {
+    $('.container').html("");
+    createTimeBlocks();
+    loadTasks();
+    $("#currentDay").html("Current Date: " + moment().format('MMMM Do YYYY'));
+
+    console.log('updated look at '+moment().format())
+}, 15000)
