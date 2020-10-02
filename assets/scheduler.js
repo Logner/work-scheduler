@@ -180,7 +180,6 @@ $("div.card").on('click', function() {
 setInterval(function() {
     currentTime = moment().format("HH");
     setTimeColor();
-    loadTasks();
     $("#currentDay").html("Current Date: " + moment().format('MMMM Do YYYY'));
 
     console.log('updated look at '+moment().format())
