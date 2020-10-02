@@ -74,7 +74,7 @@ var createTimeBlocks = function() {
         // $(<id>) creates and $(id) selects
         var timeBlock = $("<div>").addClass('row').attr('id',i+"-blk");
         var displayTime = $("<div>").addClass("col-sm-2 dt");
-        var taskContent = $('<div>').addClass("col card "+setTimeColor(i)+" mb-3");
+        var taskContent = $('<div>').addClass("col card text-white mb-3").attr('id',i+"-card");
         var saveTaskBtn = $('<div>').addClass('col-sm-auto sb');
 
         // child for taskContent card (need to create this child due to bootstrap rules)
@@ -98,25 +98,36 @@ var createTimeBlocks = function() {
 }
 
 // selecting color based on current time upon page load.
-var setTimeColor = function(time) {
-    if (parseInt(currentTime) < time) {
-        // future
-        return 'text-white bg-success';
-    }
-    else if(parseInt(currentTime) > time) {
-
-        // past
-        return 'text-white bg-secondary';
-    }
-    else{
-        // present
-        return 'text-white bg-primary';
-    }
+var setTimeColor = function() {
+    var cardsToColor = $('div.card')
+    for(i=0; i<cardsToColor.length; i++) {
+        var card = $(cardsToColor[i]);
+        var time = cardsToColor[i].id.split('-')[0];
+        console.log(card)
+        if (parseInt(currentTime) < time) {
+            // future
+            card.removeClass('bg-secondary');
+            card.removeClass('bg-primary')
+            card.addClass('bg-success');
+        }
+        else if(parseInt(currentTime) > time) {
+            // past
+            card.removeClass('bg-sucess')
+            card.removeClass('bg-primary')
+            card.addClass('bg-secondary');
+        }
+        else{
+            // present
+            card.removeClass('bg-success')
+            card.removeClass('bg-secondary');
+            card.addClass('bg-primary');
+    }}
 }
 
 // Populating the page
 $("#currentDay").html("Current Date: " + moment().format('MMMM Do YYYY'));
 createTimeBlocks();
+setTimeColor();
 loadTasks();
 
 // Adding event listeners
@@ -168,8 +179,8 @@ $("div.card").on('click', function() {
 
 // Updating Webpage every 15 seconds to keep the app updated.
 setInterval(function() {
-    $('.container').html("");
-    createTimeBlocks();
+    currentTime = moment().format("HH");
+    setTimeColor();
     loadTasks();
     $("#currentDay").html("Current Date: " + moment().format('MMMM Do YYYY'));
 
